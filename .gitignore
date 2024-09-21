@@ -1,0 +1,39 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+calendarbase-frontend/node_modules/
+calendarbase-frontend/.pnp
+calendarbase-frontend/.pnp.js
+calendarbase-frontend/.yarn/install-state.gz
+
+# testing
+calendarbase-frontend/coverage
+
+# next.js
+calendarbase-frontend/.next/
+calendarbase-frontend/out/
+
+# production
+calendarbase-frontend/build/
+
+# misc
+calendarbase-frontend/.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+calendarbase-frontend/.env*.local
+
+# vercel
+calendarbase-frontend/.vercel
+
+# typescript
+*.tsbuildinfo
+calendarbase-frontend/next-env.d.ts
+
+.vscode
+notes1.txt
