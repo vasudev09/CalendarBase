@@ -35,6 +35,13 @@ calendarbase-frontend/.vercel
 *.tsbuildinfo
 calendarbase-frontend/next-env.d.ts
 
+# Django #
+__pycache__
+
+#Environments
+.env
+
 .vscode
 notes1.txt
 calendarbase-frontend/certificates
+backend-env-cb
