@@ -4,9 +4,9 @@ from . import views
 
 urlpatterns = [
     # events
-    path("events/"),
-    path("event/add/"),
-    path("event/delete/"),
+    # path("events/"),
+    # path("event/add/"),
+    # path("event/delete/"),
     # customers
     # path("customers/", views.CustomerList.as_view()),
     # path("customer/<int:pk>/", views.CustomerDetail.as_view()),
