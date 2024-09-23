@@ -33,6 +33,27 @@ const Dashboard = () => {
     fetchEvents();
   }, []);
 
+  useEffect(() => {
+    if (events.length > 0) {
+      const calendarMappedEvents = mapEventsToCalendar(events);
+      setCalendarEvents(calendarMappedEvents);
+    }
+  }, [events]);
+
+  const mapEventsToCalendar = (events: EventType[]): CalendarEventType[] => {
+    return events.map((event) => {
+      const startDateTime = new Date(`${event.date}T${event.start_time}`);
+      const endDateTime = new Date(`${event.date}T${event.end_time}`);
+
+      return {
+        title: event.title,
+        allDay: false,
+        start: startDateTime,
+        end: endDateTime,
+      };
+    });
+  };
+
   async function fetchEvents() {
     try {
       const res = await fetch(
@@ -126,7 +147,7 @@ const Dashboard = () => {
           <div className="text-xl md:text-3xl font-semibold text-gray-800 py-3">
             Schedule
           </div>
-          <div className="px-4">
+          <div className="px-8">
             <BigCalendar events={calendarEvents} />
           </div>
         </div>
