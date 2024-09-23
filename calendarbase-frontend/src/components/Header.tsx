@@ -4,8 +4,35 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
+import { useState, useEffect } from "react";
+import { ProfileType } from "@/app/types";
+
 const Header = () => {
   const router = useRouter();
+
+  const [profile, setProfile] = useState<ProfileType | null>(null);
+
+  useEffect(() => {
+    getCustomer();
+  }, []);
+
+  async function getCustomer() {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/customer/profile/`,
+        {
+          cache: "no-cache",
+          credentials: "include",
+        }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        setProfile(data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
   return (
     <div className="h-16 px-4 md:px-6 lg:px-14 xl:px-28 2xl:px-60 relative min-w-[350px]">
       <div className="flex items-center justify-between gap-8 h-full">
@@ -19,7 +46,10 @@ const Header = () => {
         </div>
         <div className="flex items-center justify-between gap-6">
           <div className="text-sm md:text-base">
-            Welcome <span className="text-purple-400">User</span>
+            Welcome{" "}
+            <span className="text-purple-400">
+              {profile?.username ? profile.username : ""}
+            </span>
           </div>
           <div
             className="cursor-pointer"

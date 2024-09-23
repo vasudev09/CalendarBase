@@ -2,20 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-.rbc-btn-group:first-child {
-  display: none !important;
-}
-
 .rbc-toolbar-label {
   text-align: right !important;
   padding: 0px 20px !important;
 }
 
-.rbc-btn-group:last-child {
+.rbc-btn-group {
   font-size: 13px !important;
 }
 
-.rbc-btn-group:last-child button {
+.rbc-btn-group button {
   border: none !important;
   background-color: #f1f0ff !important;
   margin-left: 2px !important;
@@ -30,24 +26,12 @@
   border-color: #eee !important;
 }
 
-.rbc-time-header {
-  display: none !important;
-}
-
-.rbc-time-content {
-  border: none !important;
-}
-
 .rbc-time-gutter.rbc-time-column {
   font-size: 12px !important;
 }
 
 .rbc-time-gutter.rbc-time-column .rbc-timeslot-group {
   padding: 0px 20px !important;
-}
-
-.rbc-timeslot-group {
-  background-color: #f7fdff !important;
 }
 
 .rbc-day-slot {
@@ -58,36 +42,17 @@
   border: none !important;
   color: black !important;
   padding: 10px !important;
-  margin: 10px !important;
-  width: 99% !important;
-}
-
-.rbc-event:nth-child(1) {
-  background-color: #e2f8ff !important;
-}
-.rbc-event:nth-child(2) {
-  background-color: #fefce8 !important;
-}
-.rbc-event:nth-child(3) {
-  background-color: #f2f1ff !important;
-}
-.rbc-event:nth-child(4) {
-  background-color: #fdf2fb !important;
-}
-.rbc-event:nth-child(5) {
-  background-color: #e2f8ff !important;
-}
-.rbc-event:nth-child(6) {
-  background-color: #fefce8 !important;
-}
-.rbc-event:nth-child(7) {
-  background-color: #f2f1ff !important;
-}
-.rbc-event:nth-child(8) {
-  background-color: #fdf2fb !important;
+  min-width: 100px !important;
+  margin-left: 5px !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important;
+  font-size: 14px !important;
 }
 
 .rbc-event-label {
   color: gray !important;
   margin-bottom: 5px;
+}
+
+.rbc-month-row {
+  overflow: visible !important;
 }

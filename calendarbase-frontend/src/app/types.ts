@@ -3,8 +3,8 @@ export interface EventType {
   title: string;
   description: string;
   date: string;
-  startTime: string;
-  endTime: string;
+  start_time: string;
+  end_time: string;
 }
 
 export interface CalendarEventType {
@@ -12,4 +12,11 @@ export interface CalendarEventType {
   allDay: boolean;
   start: Date;
   end: Date;
+}
+
+export interface ProfileType {
+  customer_id: number;
+  user_id: number;
+  email: "string";
+  username: "string";
 }
