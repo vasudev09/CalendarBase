@@ -120,31 +120,28 @@ def customer_login(request):
     User = get_user_model()
     if not all([email, password]):
         return JsonResponse({"message": "All fields are required."}, status=400)
+
     try:
         user = User.objects.get(email=email)
-        username = user.username
-        user = authenticate(username=username, password=password)
-        if user:
-            refresh = RefreshToken.for_user(user)
-            response = JsonResponse(
-                {"message": "Success", "user": user.username}, status=200
-            )
-            response.set_cookie(
-                key="access_token",
-                value=str(refresh.access_token),
-                httponly=True,
-                secure=True,
-                samesite="None",
-                max_age=604800,
-            )
-            return response
-        else:
-            msg = {"message": "Invalid Email/Password!!"}
-            return JsonResponse(msg, status=401)
-
     except User.DoesNotExist:
-        msg = {"message": "Invalid Email/Password!!"}
-        return JsonResponse(msg, status=401)
+        return Response({"message": "Invalid Email/Password."}, status=401)
+    user = authenticate(username=user.username, password=password)
+    if user:
+        refresh = RefreshToken.for_user(user)
+        response = JsonResponse(
+            {"message": "Success", "user": user.username}, status=200
+        )
+        response.set_cookie(
+            key="access_token",
+            value=str(refresh.access_token),
+            httponly=True,
+            secure=True,
+            samesite="None",
+            max_age=604800,
+        )
+        return response
+    else:
+        return Response({"message": "Invalid Email/Password."}, status=401)
 
 
 @api_view(["GET"])
