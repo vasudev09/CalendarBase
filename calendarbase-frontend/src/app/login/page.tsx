@@ -57,6 +57,7 @@ export default function LoginPage() {
           {
             method: "POST",
             body: data,
+            credentials: "include",
           }
         );
         const content = await res.json();
