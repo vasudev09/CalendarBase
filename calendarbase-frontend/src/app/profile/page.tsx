@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { ProfileType } from "../types";
 
 const ProfilePage = () => {
   const { isAuthenticated, setIsAuthenticated } = useAuth();
   const router = useRouter();
 
-  const [profile, setProfile] = useState<any | null>(null);
+  const [profile, setProfile] = useState<ProfileType | null>(null);
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
   const [changePasswordInput, setChangePasswordInput] = useState(false);
@@ -35,7 +36,7 @@ const ProfilePage = () => {
           cache: "no-cache",
         }
       );
-      const data = await res.json();
+      // const data = await res.json();
       if (res.ok) {
         setIsAuthenticated(false);
         router.push("/login");
@@ -70,7 +71,7 @@ const ProfilePage = () => {
     if (password.length > 7) {
       try {
         setLoading(true);
-        let data = new FormData();
+        const data = new FormData();
         data.append("password", password);
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/customer/change-password/`,

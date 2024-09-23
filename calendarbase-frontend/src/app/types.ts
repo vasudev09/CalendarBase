@@ -13,3 +13,10 @@ export interface CalendarEventType {
   start: Date;
   end: Date;
 }
+
+export interface ProfileType {
+  customer_id: number;
+  user_id: number;
+  email: "string";
+  username: "string";
+}

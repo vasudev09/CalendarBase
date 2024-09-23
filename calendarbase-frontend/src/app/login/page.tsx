@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useState, useEffect } from "react";
@@ -48,7 +47,7 @@ export default function LoginPage() {
     setError("");
     setIsLoading(true);
     if (mode === MODE.REGISTER) {
-      let data = new FormData();
+      const data = new FormData();
       data.append("username", username);
       data.append("email", email);
       data.append("password", password);
@@ -73,7 +72,7 @@ export default function LoginPage() {
       }
     }
     if (mode === MODE.LOGIN) {
-      let data = new FormData();
+      const data = new FormData();
       data.append("email", email);
       data.append("password", password);
       try {
@@ -229,11 +228,12 @@ export default function LoginPage() {
                 {mode === MODE.LOGIN && (
                   <div className="mt-8 flex justify-center items-center">
                     <p className="font-medium text-base">
-                      Don't have an account?
+                      Don&apos;t have an account?
                     </p>
                     <button
                       onClick={() => {
-                        setMode(MODE.REGISTER), setError("");
+                        setMode(MODE.REGISTER);
+                        setError("");
                       }}
                       className="ml-2 font-medium text-base text-violet-500"
                     >
@@ -248,7 +248,8 @@ export default function LoginPage() {
                     </p>
                     <button
                       onClick={() => {
-                        setMode(MODE.LOGIN), setError("");
+                        setMode(MODE.LOGIN);
+                        setError("");
                       }}
                       className="ml-2 font-medium text-base text-violet-500"
                     >
@@ -261,7 +262,8 @@ export default function LoginPage() {
                     <p className="font-medium text-base">Go back to</p>
                     <button
                       onClick={() => {
-                        setMode(MODE.LOGIN), setError("");
+                        setMode(MODE.LOGIN);
+                        setError("");
                       }}
                       className="ml-2 font-medium text-base text-violet-500"
                     >

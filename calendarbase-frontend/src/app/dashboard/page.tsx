@@ -15,7 +15,7 @@ const Dashboard = () => {
   const [events, setEvents] = useState<EventType[]>([]);
   const [calendarEvents, setCalendarEvents] = useState<CalendarEventType[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const router = useRouter();
 
   const [submitError, setSubmitError] = useState("");
@@ -72,8 +72,18 @@ const Dashboard = () => {
     }
   }
 
-  const handleAddEvent = async (event: any, update: boolean, id?: number) => {
-    let data = new FormData();
+  const handleAddEvent = async (
+    event: {
+      title: string;
+      description: string;
+      date: string;
+      startTime: string;
+      endTime: string;
+    },
+    update: boolean,
+    id?: number
+  ) => {
+    const data = new FormData();
     if (id) {
       data.append("id", id.toString());
     }
@@ -94,7 +104,7 @@ const Dashboard = () => {
           credentials: "include",
         }
       );
-      const content = await res.json();
+      //   const content = await res.json();
       if (res.ok) {
         setIsModalOpen(false);
         setPrefillEvent(undefined);
@@ -117,7 +127,7 @@ const Dashboard = () => {
   };
 
   const handleDeleteEvent = async (id: number) => {
-    let data = new FormData();
+    const data = new FormData();
     data.append("id", id.toString());
 
     try {
@@ -129,7 +139,7 @@ const Dashboard = () => {
           credentials: "include",
         }
       );
-      const content = await res.json();
+      //   const content = await res.json();
       if (res.ok) {
         fetchEvents();
       } else {

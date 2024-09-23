@@ -5,11 +5,12 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import { useState, useEffect } from "react";
+import { ProfileType } from "@/app/types";
 
 const Header = () => {
   const router = useRouter();
 
-  const [profile, setProfile] = useState<any | null>(null);
+  const [profile, setProfile] = useState<ProfileType | null>(null);
 
   useEffect(() => {
     getCustomer();

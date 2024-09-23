@@ -2,8 +2,8 @@
 import { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { useState, useCallback, useMemo } from "react";
-import { EventType, CalendarEventType } from "@/app/types";
+import { useState, useCallback } from "react";
+import { CalendarEventType } from "@/app/types";
 
 const localizer = momentLocalizer(moment);
 
@@ -21,7 +21,7 @@ const BigCalendar: React.FC<{ events: CalendarEventType[] }> = ({ events }) => {
     [setDate]
   );
 
-  const getBackgroundColorForEvent = (event: CalendarEventType) => {
+  const getBackgroundColorForEvent = () => {
     const colors = ["#e2f8ff", "#fefce8", "#f2f1ff", "#fdf2fb"];
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
     return randomColor;
@@ -47,8 +47,8 @@ const BigCalendar: React.FC<{ events: CalendarEventType[] }> = ({ events }) => {
       view={view}
       style={{ height: "500px", width: "100%" }}
       onView={handleOnChangeView}
-      eventPropGetter={(event) => {
-        const backgroundColor = getBackgroundColorForEvent(event);
+      eventPropGetter={() => {
+        const backgroundColor = getBackgroundColorForEvent();
         const minHeight = view === "week" ? "80px" : "40px";
         return {
           style: { backgroundColor, color: "black", minHeight },
