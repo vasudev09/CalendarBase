@@ -35,8 +35,8 @@ const LoadingSpinner = ({
               height: 50px;
               margin: 8px;
               border-radius: 50%;
-              border: 5px solid #f35c7a;
-              border-color: #f35c7a transparent #f35c7a transparent;
+              border: 5px solid #4a90e2;
+              border-color: #4a90e2 transparent #4a90e2 transparent;
               animation: dual-ring 1.2s linear infinite;
             }
             @keyframes dual-ring {
