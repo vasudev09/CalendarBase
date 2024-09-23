@@ -37,6 +37,8 @@ const Dashboard = () => {
     if (events.length > 0) {
       const calendarMappedEvents = mapEventsToCalendar(events);
       setCalendarEvents(calendarMappedEvents);
+    } else {
+      setCalendarEvents([]);
     }
   }, [events]);
 
