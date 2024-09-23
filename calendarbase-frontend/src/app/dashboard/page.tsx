@@ -7,6 +7,9 @@ import AddEventButton from "@/components/AddEventButton";
 import { EventType, CalendarEventType } from "../types";
 import { useState, useEffect } from "react";
 import EventFormModal from "@/components/EventFormModal";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 const eventsData: EventType[] = [
   {
@@ -48,12 +51,20 @@ const Dashboard = () => {
   const [events, setEvents] = useState<EventType[]>(eventsData);
   const [calendarEvents, setCalendarEvents] = useState<CalendarEventType[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     if (events === null) {
       //call api
     }
   }, [events]);
+
+  useEffect(() => {
+    if (isAuthenticated === false) {
+      router.push("/login");
+    }
+  }, [isAuthenticated]);
 
   const handleAddEvent = (event: any, update: boolean) => {
     // setEvents((prev) => [...prev, event]);
@@ -69,33 +80,35 @@ const Dashboard = () => {
   };
 
   return (
-    <div>
-      <Header />
-      <div className="px-4 md:px-6 lg:px-14 xl:px-28 2xl:px-60 min-w-[350px] mt-10">
-        <div className="text-xl md:text-3xl font-semibold text-gray-800 py-3">
-          Schedule
+    <LoadingSpinner addCondition="authFalse">
+      <div>
+        <Header />
+        <div className="px-4 md:px-6 lg:px-14 xl:px-28 2xl:px-60 min-w-[350px] mt-10">
+          <div className="text-xl md:text-3xl font-semibold text-gray-800 py-3">
+            Schedule
+          </div>
+          <div className="px-4">
+            <BigCalendar events={calendarEvents} />
+          </div>
         </div>
-        <div className="px-4">
-          <BigCalendar events={calendarEvents} />
+        <div className="px-4 md:px-6 lg:px-14 xl:px-28 2xl:px-60 min-w-[350px] mt-10">
+          <h2 className="text-xl md:text-3xl font-semibold text-gray-800 mb-6">
+            Your Events
+          </h2>
+          <EventsList
+            events={events}
+            handleEventClick={handleEventClick}
+            handleDeleteEvent={handleDeleteEvent}
+          />
         </div>
-      </div>
-      <div className="px-4 md:px-6 lg:px-14 xl:px-28 2xl:px-60 min-w-[350px] mt-10">
-        <h2 className="text-xl md:text-3xl font-semibold text-gray-800 mb-6">
-          Your Events
-        </h2>
-        <EventsList
-          events={events}
-          handleEventClick={handleEventClick}
-          handleDeleteEvent={handleDeleteEvent}
+        <AddEventButton onClick={() => setIsModalOpen(true)} />
+        <EventFormModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleAddEvent}
         />
       </div>
-      <AddEventButton onClick={() => setIsModalOpen(true)} />
-      <EventFormModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleAddEvent}
-      />
-    </div>
+    </LoadingSpinner>
   );
 };
 

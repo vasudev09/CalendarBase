@@ -20,6 +20,7 @@ from rest_framework.response import Response
 from django.conf import settings
 from django.core.mail import send_mail, BadHeaderError
 from rest_framework import status
+from rest_framework.exceptions import NotFound
 
 
 # Create your views here.
@@ -33,6 +34,23 @@ class CustomerList(generics.ListAPIView):
 class CustomerDetail(generics.RetrieveAPIView):
     queryset = models.Customer.objects.all()
     serializer_class = serializers.CustomerDetailSerializer
+
+
+class EventList(generics.ListAPIView):
+    queryset = models.Event.objects.all()
+    serializer_class = serializers.EventListSerializer
+
+    def get_queryset(self):
+        try:
+            customer = models.Customer.objects.get(user=self.request.user)
+        except models.Customer.DoesNotExist:
+            raise NotFound("Customer profile not found for the logged-in user.")
+        return models.Event.objects.filter(customer=customer)
+
+
+class EventDetail(generics.RetrieveAPIView):
+    queryset = models.Event.objects.all()
+    serializer_class = serializers.EventDetailSerializer
 
 
 @api_view(["POST"])
@@ -199,3 +217,53 @@ def validate_user(request):
         return JsonResponse({}, status=200)
     except (InvalidToken, TokenError) as e:
         return JsonResponse({}, status=401)
+
+
+@api_view(["POST"])
+def add_event(request):
+    customer = models.Customer.objects.get(user=request.user)
+    title = request.data.get("title")
+    description = request.data.get("description", "")
+    date = request.data.get("date")
+    start_time = request.data.get("start_time")
+    end_time = request.data.get("end_time")
+
+    if not all([title, date, start_time, end_time]):
+        return JsonResponse({"message": "Missing required fields."}, status=400)
+
+    try:
+        event = models.Event.objects.create(
+            customer=customer,
+            title=title,
+            description=description,
+            date=date,
+            start_time=start_time,
+            end_time=end_time,
+        )
+        return JsonResponse(
+            {"message": "Event created successfully!", "event_id": event.id}, status=201
+        )
+    except Exception as e:
+        return JsonResponse(
+            {"message": f"Failed to create event: {str(e)}"}, status=500
+        )
+
+
+@api_view(["POST"])
+def delete_event(request):
+    event_id = request.data.get("id")
+    customer = models.Customer.objects.get(user=request.user)
+
+    try:
+        event = models.Event.objects.get(id=event_id, customer=customer)
+        event.delete()
+        return JsonResponse({"message": "Event deleted successfully!"}, status=200)
+    except models.Event.DoesNotExist:
+        return JsonResponse(
+            {"message": "Event not found or you don't have permission to delete it."},
+            status=404,
+        )
+    except Exception as e:
+        return JsonResponse(
+            {"message": f"Failed to delete event: {str(e)}"}, status=500
+        )

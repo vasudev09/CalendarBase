@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
+  const router = useRouter();
   return (
     <div className="h-16 px-4 md:px-6 lg:px-14 xl:px-28 2xl:px-60 relative min-w-[350px]">
       <div className="flex items-center justify-between gap-8 h-full">
@@ -19,7 +21,12 @@ const Header = () => {
           <div className="text-sm md:text-base">
             Welcome <span className="text-purple-400">User</span>
           </div>
-          <div className="cursor-pointer">
+          <div
+            className="cursor-pointer"
+            onClick={() => {
+              router.push("/profile");
+            }}
+          >
             <Image src="/avatar.png" alt="" width={30} height={30} />
           </div>
         </div>
