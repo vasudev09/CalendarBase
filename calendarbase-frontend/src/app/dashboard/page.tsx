@@ -11,54 +11,17 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 
-const eventsData: EventType[] = [
-  {
-    id: 1,
-    title: "Party",
-    description: "party at home description",
-    date: "2024-09-25",
-    startTime: "8:30",
-    endTime: "10:30",
-  },
-  {
-    id: 2,
-    title: "Outing",
-    description: "outing at home description",
-    date: "2024-09-24",
-    startTime: "8:30",
-    endTime: "10:30",
-  },
-  {
-    id: 3,
-    title: "Match",
-    description:
-      "match at home description match at home description match at home description match at home description match at home description",
-    date: "2024-09-26",
-    startTime: "8:30",
-    endTime: "10:30",
-  },
-  {
-    id: 4,
-    title: "game",
-    description: "game at home description",
-    date: "2024-09-28",
-    startTime: "8:30",
-    endTime: "10:30",
-  },
-];
-
 const Dashboard = () => {
-  const [events, setEvents] = useState<EventType[]>(eventsData);
+  const [events, setEvents] = useState<EventType[]>([]);
   const [calendarEvents, setCalendarEvents] = useState<CalendarEventType[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { isAuthenticated, setIsAuthenticated } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    if (events === null) {
-      //call api
-    }
-  }, [events]);
+  const [submitError, setSubmitError] = useState("");
+  const [prefillEvent, setPrefillEvent] = useState<EventType | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     if (isAuthenticated === false) {
@@ -66,17 +29,93 @@ const Dashboard = () => {
     }
   }, [isAuthenticated]);
 
-  const handleAddEvent = (event: any, update: boolean) => {
-    // setEvents((prev) => [...prev, event]);
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
-    console.log("data", event, "update", update);
+  async function fetchEvents() {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/events/`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const content = await res.json();
+      if (res.ok) {
+        setEvents(content);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  const handleAddEvent = async (event: any, update: boolean, id?: number) => {
+    let data = new FormData();
+    if (id) {
+      data.append("id", id.toString());
+    }
+    data.append("title", event.title);
+    data.append("description", event.description);
+    data.append("date", event.date);
+    data.append("start_time", event.startTime);
+    data.append("end_time", event.endTime);
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/event/${
+          update ? "update" : "add"
+        }/`,
+        {
+          method: "POST",
+          body: data,
+          credentials: "include",
+        }
+      );
+      const content = await res.json();
+      if (res.ok) {
+        setIsModalOpen(false);
+        setPrefillEvent(undefined);
+        fetchEvents();
+      } else {
+        setSubmitError("Event is not added");
+      }
+    } catch (err) {
+      console.log(err);
+      setSubmitError("Something went wrong!");
+    }
   };
+
   const handleEventClick = (id: number) => {
-    console.log(id);
+    const selectedEvent = events.find((event) => event.id === id);
+    if (selectedEvent) {
+      setPrefillEvent(selectedEvent);
+      setIsModalOpen(true);
+    }
   };
 
-  const handleDeleteEvent = (id: number) => {
-    console.log("delete", id);
+  const handleDeleteEvent = async (id: number) => {
+    let data = new FormData();
+    data.append("id", id.toString());
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/event/delete/`,
+        {
+          method: "POST",
+          body: data,
+          credentials: "include",
+        }
+      );
+      const content = await res.json();
+      if (res.ok) {
+        fetchEvents();
+      } else {
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -104,8 +143,14 @@ const Dashboard = () => {
         <AddEventButton onClick={() => setIsModalOpen(true)} />
         <EventFormModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            setPrefillEvent(undefined);
+          }}
           onSubmit={handleAddEvent}
+          submitError={submitError}
+          setSubmitError={setSubmitError}
+          prefillEvent={prefillEvent}
         />
       </div>
     </LoadingSpinner>

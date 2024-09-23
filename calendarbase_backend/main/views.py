@@ -21,7 +21,7 @@ from django.conf import settings
 from django.core.mail import send_mail, BadHeaderError
 from rest_framework import status
 from rest_framework.exceptions import NotFound
-
+from datetime import datetime
 
 # Create your views here.
 
@@ -232,6 +232,17 @@ def add_event(request):
         return JsonResponse({"message": "Missing required fields."}, status=400)
 
     try:
+        start_datetime = datetime.strptime(f"{date} {start_time}", "%Y-%m-%d %H:%M")
+        end_datetime = datetime.strptime(f"{date} {end_time}", "%Y-%m-%d %H:%M")
+    except ValueError:
+        return JsonResponse({"message": "Invalid date or time format."}, status=400)
+
+    if end_datetime <= start_datetime:
+        return JsonResponse(
+            {"message": "End time must be greater than start time."}, status=400
+        )
+
+    try:
         event = models.Event.objects.create(
             customer=customer,
             title=title,
@@ -266,4 +277,60 @@ def delete_event(request):
     except Exception as e:
         return JsonResponse(
             {"message": f"Failed to delete event: {str(e)}"}, status=500
+        )
+
+
+@api_view(["POST"])
+def update_event(request):
+    customer = models.Customer.objects.get(user=request.user)
+    event_id = request.data.get("id")
+
+    if not event_id:
+        return JsonResponse({"message": "Event ID is required."}, status=400)
+
+    try:
+        event = models.Event.objects.get(id=event_id, customer=customer)
+    except models.Event.DoesNotExist:
+        return JsonResponse({"message": "Event not found or unauthorized."}, status=404)
+
+    title = request.data.get("title", event.title)
+    description = request.data.get("description", event.description)
+    date = request.data.get("date", event.date)
+    start_time = request.data.get("start_time", event.start_time)
+    end_time = request.data.get("end_time", event.end_time)
+
+    if not all([title, date, start_time, end_time]):
+        return JsonResponse({"message": "Missing required fields."}, status=400)
+
+    def parse_time(date_str, time_str):
+        for fmt in ("%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S"):
+            try:
+                return datetime.strptime(f"{date_str} {time_str}", fmt)
+            except ValueError:
+                continue
+        return None
+
+    start_datetime = parse_time(date, start_time)
+    end_datetime = parse_time(date, end_time)
+
+    if not start_datetime or not end_datetime:
+        return JsonResponse({"message": "Invalid date or time format."}, status=400)
+
+    if end_datetime <= start_datetime:
+        return JsonResponse(
+            {"message": "End time must be greater than start time."}, status=400
+        )
+
+    event.title = title
+    event.description = description
+    event.date = date
+    event.start_time = start_time
+    event.end_time = end_time
+
+    try:
+        event.save()
+        return JsonResponse({"message": "Event updated successfully!"}, status=200)
+    except Exception as e:
+        return JsonResponse(
+            {"message": f"Failed to update event: {str(e)}"}, status=500
         )

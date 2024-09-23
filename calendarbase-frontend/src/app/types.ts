@@ -3,8 +3,8 @@ export interface EventType {
   title: string;
   description: string;
   date: string;
-  startTime: string;
-  endTime: string;
+  start_time: string;
+  end_time: string;
 }
 
 export interface CalendarEventType {

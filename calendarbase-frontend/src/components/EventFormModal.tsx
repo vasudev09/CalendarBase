@@ -13,15 +13,19 @@ interface EventFormModalProps {
       startTime: string;
       endTime: string;
     },
-    update: boolean
+    update: boolean,
+    id?: number
   ) => void;
   prefillEvent?: {
+    id: number;
     title: string;
     description: string;
     date: string;
-    startTime: string;
-    endTime: string;
+    start_time: string;
+    end_time: string;
   };
+  submitError: string;
+  setSubmitError: (error: string) => void;
 }
 
 const EventFormModal: React.FC<EventFormModalProps> = ({
@@ -29,21 +33,22 @@ const EventFormModal: React.FC<EventFormModalProps> = ({
   onClose,
   onSubmit,
   prefillEvent,
+  submitError,
+  setSubmitError,
 }) => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [date, setDate] = useState<string>("");
   const [startTime, setStartTime] = useState<string>("");
   const [endTime, setEndTime] = useState<string>("");
-  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     if (prefillEvent) {
       setTitle(prefillEvent.title);
       setDescription(prefillEvent.description);
       setDate(prefillEvent.date);
-      setStartTime(prefillEvent.startTime);
-      setEndTime(prefillEvent.endTime);
+      setStartTime(prefillEvent.start_time);
+      setEndTime(prefillEvent.end_time);
     } else {
       setTitle("");
       setDescription("");
@@ -57,24 +62,19 @@ const EventFormModal: React.FC<EventFormModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setSubmitError("");
     const start = new Date(`${date}T${startTime}`);
     const end = new Date(`${date}T${endTime}`);
 
     if (end <= start) {
-      setError("End time must be greater than start time.");
+      setSubmitError("End time must be greater than start time.");
       return;
     }
     onSubmit(
       { title, description, date, startTime, endTime },
-      prefillEvent ? true : false
+      prefillEvent ? true : false,
+      prefillEvent?.id
     );
-    setTitle("");
-    setDescription("");
-    setDate("");
-    setStartTime("");
-    setEndTime("");
-    onClose();
   };
 
   const handleClose = () => {
@@ -92,8 +92,10 @@ const EventFormModal: React.FC<EventFormModalProps> = ({
         <h2 className="text-lg font-bold mb-2">
           {prefillEvent ? "Update Event" : "Add Event"}
         </h2>
-        {error && (
-          <div className="text-red-500 mb-2 text-center text-sm">{error}</div>
+        {submitError && (
+          <div className="text-red-500 mb-2 text-center text-sm">
+            {submitError}
+          </div>
         )}
         <form onSubmit={handleSubmit}>
           <div className="mb-2 min-w-80 md:min-w-96">

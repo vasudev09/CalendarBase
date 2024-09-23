@@ -26,8 +26,8 @@ const EventsList: React.FC<{
                   <span className="font-semibold">Date:</span> {event.date}
                 </p>
                 <p>
-                  <span className="font-semibold">Time:</span> {event.startTime}{" "}
-                  {"-"} {event.endTime}
+                  <span className="font-semibold">Time:</span>{" "}
+                  {event.start_time} {"-"} {event.end_time}
                 </p>
               </div>
               <p className="text-gray-600 my-4">
